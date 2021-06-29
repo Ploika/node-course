@@ -4,6 +4,8 @@ const path = require('path')
 const fs = require('fs');
 const app = express();
 
+const fsPromises = require('fs/promises')
+
 app.use(express.static(path.join(__dirname, 'static')));
 
 app.set('view engine', '.hbs');
@@ -26,24 +28,32 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
     res.render('login')
 })
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     let {name, email, password} = req.body
 
-    const users = JSON.parse(fs.readFile(usersPath).toString(), err => console.log(err))
-    const emailCreated = users.find(user => { user.email === email})
-    if(!name || !email || password){
+    let users = await fsPromises.readFile(usersPath, 'utf8');
+    users = JSON.parse(users);
+
+    const emailCreated = users.find(user => user.email === email)
+
+    if(!name || !email || !password){
         error = 'fill all form'
         res.render('error', {error})
         return
     }
+
     if(emailCreated){
         error = 'this email already created'
         res.render('error', {error})
         return
     }
+
     const id = users.length + 1;
+
     users.push({id, name, email, password});
-    fs.writeFile(usersPath, JSON.stringify(users), (err) => {console.log(err)})
+
+    await fsPromises.writeFile(usersPath, JSON.stringify(users));
+
     res.redirect(`/`)
 })
 
