@@ -1,1 +1,0 @@
-{"name":"vasuluna","gender":"female","age":63}
