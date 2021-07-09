@@ -1,4 +1,4 @@
-const userRolesEnum = require('../constans/user-roles.enum');
+const { userRolesEnum } = require('../constans');
 const { User } = require('../dataBase');
 const { errorMessages: { RECORD_NOT_FOUND, WRONG_EMAIL }, ErrorHandler } = require('../errors');
 const { responseCodesEnum: { NOT_FOUND, BAD_REQUEST } } = require('../constans');
@@ -64,6 +64,35 @@ module.exports = {
       if (error) {
         throw new Error(error.details[0].message);
       }
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  checkUserRole: (rolesArr = []) => (req, res, next) => {
+    try {
+      if (!rolesArr || !rolesArr.length) {
+        return next();
+      }
+      // eslint-disable-next-line no-unused-vars
+      const { role } = req.user;
+
+      if (!rolesArr.includes(role)) {
+        throw new Error('Permission dead');
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  },
+  getUserbyDynamicParam: (paramName, searchIn = 'body', dbKey = paramName) => async (req, res, next) => {
+    try {
+      const valueOfParam = req[searchIn][paramName];
+
+      const userById = await User.findOne({ [dbKey]: valueOfParam });
+
+      req.user = userById;
+      next();
     } catch (e) {
       next(e);
     }

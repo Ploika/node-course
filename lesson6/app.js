@@ -1,7 +1,10 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+require('dotenv').config();
+
 const { userRouter, authRouter } = require('./routes');
+const { constants } = require('./constans');
 
 const app = express();
 
@@ -16,8 +19,8 @@ app.use('/users', userRouter);
 app.use('*', _notFoundhandler);
 app.use(_handleErrors);
 
-app.listen(3000, () => {
-  console.log('local host 3000');
+app.listen(constants.PORT, () => {
+  console.log(`App listen ${constants.PORT}`);
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -38,5 +41,5 @@ function _notFoundhandler(req, res, next) {
 }
 
 function _mongooseConnector() {
-  mongoose.connect('mongodb://localhost:27017/feb-2021', { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+  mongoose.connect(constants.BD_CONECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
 }

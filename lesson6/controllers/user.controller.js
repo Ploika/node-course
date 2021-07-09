@@ -38,6 +38,15 @@ module.exports = {
   updateUserById: async (req, res) => {
     await User.updateOne(req.body);
     res.json('success');
+  },
+
+  updateUser: (req, res, next) => {
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const { body } = req;
+    } catch (e) {
+      next(e);
+    }
   }
 
 };
