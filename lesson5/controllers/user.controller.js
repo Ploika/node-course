@@ -1,5 +1,6 @@
 const { User } = require('../dataBase');
 const { responseCodesEnum } = require('../constans');
+const { passwordHasher } = require('../helpers');
 
 module.exports = {
   gettAllUsers: async (req, res) => {
@@ -10,7 +11,9 @@ module.exports = {
 
   createUser: async (req, res, next) => {
     try {
-      const createdUser = await User.create(req.body);
+      const { password } = req.body;
+      const hashedPassword = await passwordHasher.hash(password);
+      const createdUser = await User.create({ ...req.body, password: hashedPassword });
 
       res.status(responseCodesEnum.CREATED).json(createdUser);
     } catch (e) {

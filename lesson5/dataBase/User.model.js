@@ -19,6 +19,11 @@ const userSchema = new Schema({
     default: 15
   },
 
+  password: {
+    type: String,
+    select: false
+  },
+
   role: {
     type: String,
     enum: Object.values(userRolesEnum),

@@ -4,7 +4,7 @@ const { userMiddleware } = require('../middlewares');
 
 router.get('/', userController.gettAllUsers);
 
-router.post('/', userMiddleware.checkIsUserEmailExist, userController.createUser);
+router.post('/', userMiddleware.checkUserValidity, userMiddleware.checkIsUserEmailExist, userController.createUser);
 
 router.delete('/:userId', userController.deleteUserById);
 

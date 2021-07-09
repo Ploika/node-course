@@ -2,6 +2,7 @@ const userRolesEnum = require('../constans/user-roles.enum');
 const { User } = require('../dataBase');
 const { errorMessages: { RECORD_NOT_FOUND, WRONG_EMAIL }, ErrorHandler } = require('../errors');
 const { responseCodesEnum: { NOT_FOUND, BAD_REQUEST } } = require('../constans');
+const userValidator = require('../validators/user/user.validator');
 
 module.exports = {
   checkIsUserPresent: async (req, res, next) => {
@@ -29,7 +30,7 @@ module.exports = {
     try {
       const { email } = req.body;
 
-      const userEmail = await User.findOne(email);
+      const userEmail = await User.findOne({ email });
 
       if (userEmail) {
         throw new ErrorHandler(
@@ -52,6 +53,17 @@ module.exports = {
         throw new Error('not admin');
       }
       next();
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  checkUserValidity: (req, res, next) => {
+    try {
+      const { error } = userValidator.createUser.validate(req.body);
+      if (error) {
+        throw new Error(error.details[0].message);
+      }
     } catch (e) {
       next(e);
     }
