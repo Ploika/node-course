@@ -89,7 +89,7 @@ module.exports = {
     try {
       const valueOfParam = req[searchIn][paramName];
 
-      const userById = await User.findOne({ [dbKey]: valueOfParam });
+      const userById = await User.findOne({ [dbKey]: valueOfParam }).select('+password');
 
       req.user = userById;
       next();
